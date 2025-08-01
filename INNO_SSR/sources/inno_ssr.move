@@ -5,6 +5,7 @@ module inno_ssr::SSR;
 
 use sui::coin::{Self, Coin, TreasuryCap};
 use sui::url;
+use sui::pay;
 
 const INIT_MAX_SUPPLY: u64 = 1_000_000_000_000_000_000;
 
@@ -72,6 +73,42 @@ public entry fun update_max_supply(extended_treasury_cap: &mut ExtendedTreasuryC
     let sender = tx_context::sender(ctx);
     assert!(sender == extended_treasury_cap.supply_config.owner, 2); // Only the owner can update the max_supply.
     extended_treasury_cap.supply_config.max_supply = new_max_supply;
+}
+
+public entry fun transfer_bulk(mut input_coin: Coin<SSR>, recipients: vector<address>, amounts: vector<u64>, ctx: &mut TxContext) {
+    let n = vector::length(&recipients);
+    assert!(n == vector::length(&amounts), 100);
+
+    // total sum
+    let mut total: u64 = 0;
+    let mut j = 0;
+    while (j < n) {
+        total = total + *vector::borrow(&amounts, j);
+        j = j + 1;
+    };
+
+    // Verify that the current input_coin is sufficient
+    assert!(coin::value(&input_coin) >= total, 3); // 3: Not enough quantity
+
+    let mut i = 0;
+    while (i < n) {
+        let amount = *vector::borrow(&amounts, i);
+        let send_coin = coin::split(&mut input_coin, amount, ctx);
+        let recipient = *vector::borrow(&recipients, i);
+        transfer::public_transfer(send_coin, recipient);
+        
+        i = i + 1;
+    };
+
+     pay::keep(input_coin, ctx);
+}
+
+public entry fun transfer_inno_protocol_reserve(mut coin : Coin<SSR>, amount: u64, recipient: address, ctx: &mut TxContext) {
+    assert!(coin::value(&coin) >= amount, 4);
+
+    let send_coin = coin::split(&mut coin, amount, ctx);
+    transfer::public_transfer(send_coin, recipient);
+    pay::keep(coin, ctx)
 }
 
 #[test_only]

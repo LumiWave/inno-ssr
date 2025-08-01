@@ -1,12 +1,21 @@
 [package]
 name = "INNO_SSR"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2024"
+published-at = "0x79f0b9a0862120619e0ed79690c81be28032b63b2b4fb19226dc81f40fa60d03"
 
 [dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "testnet" }
+# Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "testnet" }
 
 [addresses]
 inno_ssr =  "0x0"
+
+
+
+
+# UpgradeCap id : 0x70c687d12af6e23ef6258687d5644da399909f7b0a2a332a56e7c92adef8c913
+# Last Package id : 0xbf7efe931544ae3bea50b8f29467a4d839b5d8fc59b3d98b0280c3629b06302b
+# Last Upgrade Digest : 6mjucusauWUfWWdjrKY7kiPdZ6Vv8bT3hFGjxUbLBsrG
+
 
 
